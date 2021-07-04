@@ -5,18 +5,20 @@ and view the inference results on the image in the browser.
 import argparse
 import io
 import os
+from UI import generate
 from PIL import Image
 from pathlib import Path
 import torch
 from flask import Flask, render_template, request, redirect
-from flask_ngrok import run_with_ngrok
+
+# from flask_ngrok import run_with_ngrok
 
 
 app = Flask(
     __name__, static_url_path="", static_folder="static", template_folder="templates"
 )
 
-run_with_ngrok(app)  # Start ngrok when app is run
+# run_with_ngrok(app)  # Start ngrok when app is run
 
 
 @app.route("/", methods=["GET", "POST"])
@@ -25,18 +27,23 @@ def predict():
         if "file" not in request.files:
             return redirect(request.url)
         file = request.files["file"]
+        save_dir = Path("static/shared")
+        save_dir.parent.mkdir(parents=True, exist_ok=True)
+        print(file.filename)
         if not file:
             return
 
         img_bytes = file.read()
-        img = Image.open(io.BytesIO(img_bytes))
+        try:
+            img = Image.open(io.BytesIO(img_bytes))
 
-        results = model(img, size=640)
-        results.display(save=True, save_dir=Path("static"))
-
-        return render_template("files.html")
-        # return redirect(".jpg")
-        # return redirect("static/image0.jpg")
+            results = model(img, size=640)
+            results.files[0] = file.filename
+            results.display(save=True, save_dir=save_dir)
+        except:
+            return redirect("404.html")
+        generate("static/files.html")
+        return redirect("files.html")
 
     return render_template("index.html")
 
@@ -47,7 +54,7 @@ if __name__ == "__main__":
     args = parser.parse_args()
 
     model = torch.hub.load(
-        "ultralytics/yolov5", "yolov5s", pretrained=True, force_reload=True
+        "ultralytics/yolov5", "yolov5s", pretrained=True, force_reload=False
     ).autoshape()  # force_reload = recache latest code
     model.eval()
     app.run()  # debug=True causes Restarting with stat

@@ -130,19 +130,19 @@ h1, h2, h3, h4, h5, h6 {
     color: #47cedf;
 }
 .upload-btn::before {
-    /* content: '\f0ee'; */
+    content: '\f0ee';
 }
 .help-btn::before {
-    /* content: '\f128'; */
+    content: '\f128';
 }
 .sidebar-toggle {
     margin-left: 0;
 }
 .sidebar-toggle::before {
-    /* content: '\f152'; */
+    content: '\f152';
 }
 .ui__sidebar--open .sidebar-toggle::before {
-    /* content: '\f191'; */
+    content: '\f191';
 }
 @media (min-width: 900px) {
     .sidebar-toggle {
@@ -154,7 +154,7 @@ h1, h2, h3, h4, h5, h6 {
     text-align: right;
 }
 .options-toggle::before {
-    /* content: '\f013'; */
+    content: '\f013';
 }
 .file-path {
     flex: 1 1 auto;
@@ -177,7 +177,7 @@ h1, h2, h3, h4, h5, h6 {
 .file-path li::after {
     display: inline-block;
     font-family: FontAwesome;
-    /* content: '\f105'; */
+    content: '\f105';
     opacity: 0.5;
     margin-left: 0.5rem;
     margin-right: 0.25rem;
@@ -223,7 +223,7 @@ h1, h2, h3, h4, h5, h6 {
     text-overflow: ellipsis;
 }
 .folder::before {
-    /* content: "\f07b"; */
+    content: "\f07b";
     font-family: FontAwesome;
     margin-right: 0.5rem;
     color: #47cedf;
@@ -239,7 +239,9 @@ h1, h2, h3, h4, h5, h6 {
     color: white;
 }
 .folder.folder--open::before {
-    content: "\F07C";
+    font-family: FontAwesome;
+    content: "\f07c";
+
 }
 .file-list {
     width: 100%;

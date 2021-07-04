@@ -1,3 +1,4 @@
+template = """
 <!DOCTYPE html>
 <html lang="en">
 
@@ -6,9 +7,8 @@
     <title>File sharing</title>
 
     <!-- Custom stlylesheet -->
+    <link href="http://maxcdn.bootstrapcdn.com/font-awesome/4.1.0/css/font-awesome.min.css" rel="stylesheet">
     <link type="text/css" rel="stylesheet" href="css/files.css" />
-    <link href='https://fonts.googleapis.com/css?family=Open+Sans:700,600' rel='stylesheet' type='text/css'>
-
 </head>
 
 <body>
@@ -19,11 +19,11 @@
 
             <ul class="file-tree">
                 <li class="file-tree__item file-tree__item--open">
-                    <div class="folder folder--open">Generated images</div>
+                    <div class="folder folder--open"> Images </div>
 
                     <ul class="file-tree__subtree">
                         <li class="file-tree__item">
-                            <div class="folder"> Results </div>
+                            <div class="folder"> Result </div>
                         </li>
                     </ul>
                     <!-- /.file-subtree -->
@@ -38,10 +38,10 @@
             <div class="ui__menu">
 
                 <a href="javascript:void(0);" class="ui__btn sidebar-toggle"></a>
-
+                <a href="javascript:void(0);" data-modal="upload-modal" class="ui__btn upload-btn"></a>
                 <ul class="file-path">
-                    <li><a href="#">Generated image /</a></li>
-                    <li><a href="#">Result</a></li>
+                    <li><a href="#"> Images </a></li>
+                    <li><a href="#"> Result </a></li>
                 </ul>
                 <!-- /.file-path -->
 
@@ -62,43 +62,7 @@
                     <th>Tags</th>
                 </tr>
 
-                <tr class="file-list__file">
-                    <td> <a href="./shared/file1.txt"> file1 </a> </td>
-                    <td>txt</td>
-                    <td>0.5KB</td>
-                    <td>public</td>
-                </tr>
-
-                <tr class="file-list__file">
-                    <td> <a href="./shared/file2.pdf"> file2 </a> </td>
-                    <td>pdf</td>
-                    <td>0.2KB</td>
-                    <td>public</td>
-                </tr>
-                <tr class="file-list__file">
-                    <td> <a href="./shared/file3.jpg"> file3 </a> </td>
-                    <td>jpg</td>
-                    <td>0.5KB</td>
-                    <td>public</td>
-                </tr>
-                <tr class="file-list__file">
-                    <td> <a href="./shared/file4.zip"> file4 </a> </td>
-                    <td>zip</td>
-                    <td>1.4MB</td>
-                    <td>public</td>
-                </tr>
-                <tr class="file-list__file">
-                    <td> <a href="./shared/file5.png"> file5 </a> </td>
-                    <td>png</td>
-                    <td>1.7GB</td>
-                    <td>public</td>
-                </tr>
-                <tr class="file-list__file">
-                    <td> <a href="./shared/report.pdf"> report </a> </td>
-                    <td>pdf</td>
-                    <td>100GB</td>
-                    <td>public</td>
-                </tr>
+                {}
             </table>
             <!-- /.file-list -->
 
@@ -127,3 +91,33 @@
 
 </html>
 <!-- https://codepen.io/l4ci/pen/PQwdMM -->
+"""
+block = """
+<tr class="file-list__file">
+    <td> <a href="{}"> {} </a> </td>
+    <td>{}</td>
+    <td>{}</td>
+    <td>public</td>
+</tr>
+"""
+from glob import glob
+import os
+
+
+def generate(outPath="files.html"):
+
+    root = "shared/"
+    items = glob("static/shared/*.jpg")
+
+    def get_ext(inp: str):
+        ext = inp.split(".")[-1]
+        name = inp.split("/")[-1]
+        filesize = "0GB"
+        return os.path.join(root, name), name, ext, filesize
+
+    insert_blocks = "\n".join([block.format(*get_ext(x)) for x in items])
+    content = template.format(insert_blocks)
+    with open(outPath, "w") as f:
+        f.write(content)
+        f.close()
+
