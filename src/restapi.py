@@ -10,11 +10,11 @@ from flask import Flask, request
 
 app = Flask(__name__)
 
-DETECTION_URL = "/v1/object-detection/yolov5s"
+DETECTION_URL = "/api/detect"
 
 
 @app.route(DETECTION_URL, methods=["POST"])
-def predict():
+def json_predict():
     if not request.method == "POST":
         return
 

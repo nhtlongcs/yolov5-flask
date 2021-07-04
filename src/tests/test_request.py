@@ -2,8 +2,8 @@
 import pprint
 import requests
 
-DETECTION_URL = "http://localhost:5000/v1/object-detection/yolov5s"
-TEST_IMAGE = "zidane.jpg"
+DETECTION_URL = "http://localhost:5000/api/detect"
+TEST_IMAGE = "im.jpg"
 
 image_data = open(TEST_IMAGE, "rb").read()
 
