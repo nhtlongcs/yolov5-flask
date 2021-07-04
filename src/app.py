@@ -11,14 +11,16 @@ from pathlib import Path
 import torch
 from flask import Flask, render_template, request, redirect
 
-# from flask_ngrok import run_with_ngrok
-
 
 app = Flask(
     __name__, static_url_path="", static_folder="static", template_folder="templates"
 )
 
-# run_with_ngrok(app)  # Start ngrok when app is run
+
+model = torch.hub.load(
+    "ultralytics/yolov5", "yolov5s", pretrained=True, force_reload=False
+).autoshape()  # force_reload = recache latest code
+model.eval()
 
 
 @app.route("/", methods=["GET", "POST"])
@@ -51,10 +53,17 @@ def predict():
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description="Flask app exposing yolov5 models")
     parser.add_argument("--port", default=5000, type=int, help="port number")
+    parser.add_argument("--ngrok", default=False, action="store_true")
+
     args = parser.parse_args()
 
-    model = torch.hub.load(
-        "ultralytics/yolov5", "yolov5s", pretrained=True, force_reload=False
-    ).autoshape()  # force_reload = recache latest code
-    model.eval()
-    app.run()  # debug=True causes Restarting with stat
+    if args.ngrok:
+        from flask_ngrok import run_with_ngrok
+
+        run_with_ngrok(app)  # Start ngrok when app is run
+
+        app.run()  # debug=True causes Restarting with stat
+    else:
+        app.run(
+            host="0.0.0.0", port=args.port
+        )  # debug=True causes Restarting with stat
