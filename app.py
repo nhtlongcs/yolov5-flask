@@ -11,7 +11,11 @@ import torch
 from flask import Flask, render_template, request, redirect
 from flask_ngrok import run_with_ngrok
 
-app = Flask(__name__)
+
+app = Flask(
+    __name__, static_url_path="", static_folder="static", template_folder="templates"
+)
+
 run_with_ngrok(app)  # Start ngrok when app is run
 
 
@@ -29,8 +33,10 @@ def predict():
 
         results = model(img, size=640)
         results.display(save=True, save_dir=Path("static"))
-        
-        return redirect("static/image0.jpg")
+
+        return render_template("files.html")
+        # return redirect(".jpg")
+        # return redirect("static/image0.jpg")
 
     return render_template("index.html")
 
