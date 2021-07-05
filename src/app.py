@@ -36,17 +36,17 @@ def reload():
 @app.route("/", methods=["GET", "POST"])
 def predict():
     if request.method == "POST":
-        if "file" not in request.files:
-            return redirect(request.url)
-        file = request.files["file"]
-        save_dir = Path("static/shared")
-        save_dir.parent.mkdir(parents=True, exist_ok=True)
-        print(file.filename)
-        if not file:
-            return
-
-        img_bytes = file.read()
         try:
+            if "file" not in request.files:
+                return redirect(request.url)
+            file = request.files["file"]
+            save_dir = Path("static/shared")
+            save_dir.parent.mkdir(parents=True, exist_ok=True)
+            print(file.filename)
+            if not file:
+                return redirect("404.html")
+
+            img_bytes = file.read()
             img = Image.open(io.BytesIO(img_bytes))
 
             results = model(img, size=640)
