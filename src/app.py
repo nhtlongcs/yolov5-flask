@@ -54,7 +54,7 @@ def predict():
             results.display(save=True, save_dir=save_dir)
         except:
             return redirect("404.html")
-        return redirect("files")
+        return redirect("/files")
 
     return render_template("index.html")  # render dung cho nhung file dang template
 
