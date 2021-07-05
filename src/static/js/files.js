@@ -16,6 +16,10 @@ $("[data-modal]").on("click", function (e) {
     openModal(target);
 });
 
+function uploadfunc() {
+    window.location.href = "/"
+}
+
 function openModal(id) {
     $("#" + id).toggleClass("info-modal--active");
     $('[data-modal="' + id + '"]').toggleClass("ui__btn--active");

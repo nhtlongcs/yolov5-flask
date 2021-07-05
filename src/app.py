@@ -5,12 +5,13 @@ and view the inference results on the image in the browser.
 import argparse
 import io
 import os
+from types import MethodDescriptorType
 from UI import generate
 from PIL import Image
 from pathlib import Path
 import torch
 from flask import Flask, render_template, request, redirect
-
+from flask import Response
 
 app = Flask(
     __name__, static_url_path="", static_folder="static", template_folder="templates"
@@ -21,6 +22,15 @@ model = torch.hub.load(
     "ultralytics/yolov5", "yolov5s", pretrained=True, force_reload=False
 ).autoshape()  # force_reload = recache latest code
 model.eval()
+
+
+@app.route("/files", methods=["GET"])
+def reload():
+    print("load files")
+    content = generate(None)
+    return Response(content, mimetype="text/html")
+
+    # return render_template("files.html")
 
 
 @app.route("/", methods=["GET", "POST"])
@@ -44,10 +54,9 @@ def predict():
             results.display(save=True, save_dir=save_dir)
         except:
             return redirect("404.html")
-        generate("static/files.html")
-        return redirect("files.html")
+        return redirect("files")
 
-    return render_template("index.html")
+    return render_template("index.html")  # render dung cho nhung file dang template
 
 
 if __name__ == "__main__":

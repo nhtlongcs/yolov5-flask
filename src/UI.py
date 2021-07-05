@@ -38,7 +38,8 @@ template = """
             <div class="ui__menu">
 
                 <a href="javascript:void(0);" class="ui__btn sidebar-toggle"></a>
-                <a href="javascript:void(0);" data-modal="upload-modal" class="ui__btn upload-btn"></a>
+                <a href="javascript:void(0);" onclick="uploadfunc()" data-modal="upload-modal"
+                    class="ui__btn upload-btn"></a>
                 <ul class="file-path">
                     <li><a href="#"> Images </a></li>
                     <li><a href="#"> Result </a></li>
@@ -84,7 +85,7 @@ template = """
         <!-- /.overlay__inner -->
     </div>
     <!-- /.overlay -->
-
+    
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
     <script src="./js/files.js"></script>
 </body>
@@ -104,7 +105,7 @@ from glob import glob
 import os
 
 
-def generate(outPath="files.html"):
+def generate(outPath=None):
 
     root = "shared/"
     items = glob("static/shared/*.jpg")
@@ -117,7 +118,9 @@ def generate(outPath="files.html"):
 
     insert_blocks = "\n".join([block.format(*get_ext(x)) for x in items])
     content = template.format(insert_blocks)
-    with open(outPath, "w") as f:
-        f.write(content)
-        f.close()
+    if outPath is not (None):
+        with open(outPath, "w") as f:
+            f.write(content)
+            f.close()
+    return content
 
