@@ -2,8 +2,8 @@
 import pprint
 import requests
 
-DETECTION_URL = "http://localhost:5000/api/detect"
-TEST_IMAGE = "im.jpg"
+DETECTION_URL = "http://thevncore-lab.mooo.com:20398/api/detect"
+TEST_IMAGE = "zidane.jpg"
 
 image_data = open(TEST_IMAGE, "rb").read()
 

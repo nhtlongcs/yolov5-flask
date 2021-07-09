@@ -6,20 +6,24 @@ import argparse
 import io
 import os
 from types import MethodDescriptorType
+
+import pandas as pd
 from UI import generate
 from PIL import Image
 from pathlib import Path
 import torch
 from flask import Flask, render_template, request, redirect
 from flask import Response
+import sys
+
 
 app = Flask(
     __name__, static_url_path="", static_folder="static", template_folder="templates"
 )
 
-
+DETECTION_URL = "/api/detect"
 model = torch.hub.load(
-    "ultralytics/yolov5", "yolov5s", pretrained=True, force_reload=False
+    "/path/to/this/repo/model/module", "custom", path="best.pt", source="local",
 ).autoshape()  # force_reload = recache latest code
 model.eval()
 
@@ -29,8 +33,6 @@ def reload():
     print("load files")
     content = generate(None)
     return Response(content, mimetype="text/html")
-
-    # return render_template("files.html")
 
 
 @app.route("/", methods=["GET", "POST"])
@@ -50,6 +52,7 @@ def predict():
             img = Image.open(io.BytesIO(img_bytes))
 
             results = model(img, size=640)
+            # results.names = ["cay xuong rong", "cay hoa do", "cay hoa vang"]
             results.files[0] = file.filename
             results.display(save=True, save_dir=save_dir)
         except:
@@ -57,6 +60,22 @@ def predict():
         return redirect("/files")
 
     return render_template("index.html")  # render dung cho nhung file dang template
+
+
+@app.route(DETECTION_URL, methods=["POST"])
+def json_predict():
+    if not request.method == "POST":
+        return
+
+    if request.files.get("image"):
+        image_file = request.files["image"]
+        image_bytes = image_file.read()
+
+        img = Image.open(io.BytesIO(image_bytes))
+
+        results = model(img, size=640)
+        data = results.pandas().xyxy[0].to_json(orient="records")
+        return data
 
 
 if __name__ == "__main__":
@@ -71,8 +90,8 @@ if __name__ == "__main__":
 
         run_with_ngrok(app)  # Start ngrok when app is run
 
-        app.run()  # debug=True causes Restarting with stat
+        app.run(threaded=True)  # debug=True causes Restarting with stat
     else:
         app.run(
-            host="0.0.0.0", port=args.port
+            host="0.0.0.0", port=args.port, threaded=True
         )  # debug=True causes Restarting with stat
